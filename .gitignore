@@ -1,0 +1,17 @@
+# 🔒 Clés API, tokens...
+.env
+
+# 🧠 FAISS vector store (évite de versionner les données générées)
+vector_store/index_text/
+vector_store/index_image/
+
+# 🐍 Cache Python
+__pycache__/
+*.pyc
+
+# 📝 Fichiers temporaires et checkpoints
+*.tmp
+*.log
+*.bak
+*.swp
+*.ipynb_checkpoints/
