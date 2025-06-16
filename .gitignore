@@ -1,6 +1,9 @@
 # 🔒 Clés API, tokens...
 .env
 
+# Library
+.venv/
+
 # 🧠 FAISS vector store (évite de versionner les données générées)
 vector_store/index_text/
 vector_store/index_image/
