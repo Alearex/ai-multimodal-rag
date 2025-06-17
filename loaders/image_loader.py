@@ -21,6 +21,11 @@ def load_image(image_path):
     inputs = processor(images=image, return_tensors="pt")
 
     with torch.no_grad():
-        output = model.generate(**inputs)
+        output = model.generate(
+            **inputs,
+            num_beams=5,
+            max_length=20,
+            no_repeat_ngram_size=2,
+        )
 
     return processor.batch_decode(output, skip_special_tokens=True)[0]

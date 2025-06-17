@@ -1,0 +1,40 @@
+diff --git a/README.md b/README.md
+index c124622aca990c36b8ef3d380c68317fa95bee2f..28cd5d8c34f92dd4826ba0551e17ebc4a458c78f 100644
+--- a/README.md
++++ b/README.md
+@@ -2,25 +2,35 @@
+ 
+ This project demonstrates a lightweight multimodal retrieval-augmented generation (RAG) pipeline. It can ingest text, images and audio, encode them into a FAISS vector store and query the Mixtral model hosted on Together.
+ 
+ ## Requirements
+ 
+ Install the Python dependencies listed in `requirements.txt`:
+ 
+ ```bash
+ pip install -r requirements.txt
+ ```
+ 
+ Each dependency is pinned to a specific version for reproducibility.
+ 
+ ### Main Python packages
+ 
+ - **streamlit** – web interface
+ - **faiss-cpu** – vector store backend
+ - **sentence-transformers** – text embeddings
+ - **open_clip_torch** – CLIP model for images
+ - **faster-whisper** – fast audio transcription
+ - **pillow** – image handling
+ - **transformers** – BLIP image captioning
+ - **python-dotenv** – environment configuration
+ - **requests** – Mixtral API calls
+ - **PyMuPDF** – PDF text extraction
++
++## Configuration
++
++Create a `.env` file at the project root containing your Together API key:
++
++```bash
++TOGETHER_API_KEY=your-key
++```
++
++This variable is required to query the Mixtral API.

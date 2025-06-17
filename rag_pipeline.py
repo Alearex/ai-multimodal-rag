@@ -110,8 +110,10 @@ def process_query(uploaded_files, question):
     # Recherche fusionnée texte + image
     results = combined_search(text_index, image_index, text_query_vec, image_query_vec, k=5)
 
-    # Construction du contexte textuel uniquement à partir des résultats textuels
-    context = "\n".join(r["content"] for r in results if r["source"] == "text")
+    # Construction du contexte en agrégeant le contenu de tous les résultats
+    # (texte et images) afin que les éventuelles légendes d'images puissent
+    # être prises en compte lors de la génération.
+    context = "\n".join(r["content"] for r in results)
 
     # Appel final à Mixtral avec la question et le contexte extrait
     return query_mixtral(question, context)
