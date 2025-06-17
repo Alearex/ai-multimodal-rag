@@ -1,0 +1,21 @@
+# Core framework
+torch==2.2.0
+numpy==1.26.4
+
+# Web UI
+streamlit==1.31.1
+
+# Embedding and models
+sentence-transformers==2.6.0
+open_clip_torch==2.23.0
+faster-whisper==0.10.0
+transformers==4.38.2
+
+# Data processing
+pillow==10.2.0
+PyMuPDF==1.23.9
+faiss-cpu==1.7.4
+
+# Utilities
+python-dotenv==1.0.1
+requests==2.31.0 
