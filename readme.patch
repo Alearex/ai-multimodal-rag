@@ -1,0 +1,31 @@
+diff --git a/README.md b/README.md
+index e69de29bb2d1d6434b8b29ae775ad8c2e48c5391..c124622aca990c36b8ef3d380c68317fa95bee2f 100644
+--- a/README.md
++++ b/README.md
+@@ -0,0 +1,26 @@
++# AI Multimodal RAG
++
++This project demonstrates a lightweight multimodal retrieval-augmented generation (RAG) pipeline. It can ingest text, images and audio, encode them into a FAISS vector store and query the Mixtral model hosted on Together.
++
++## Requirements
++
++Install the Python dependencies listed in `requirements.txt`:
++
++```bash
++pip install -r requirements.txt
++```
++
++Each dependency is pinned to a specific version for reproducibility.
++
++### Main Python packages
++
++- **streamlit** – web interface
++- **faiss-cpu** – vector store backend
++- **sentence-transformers** – text embeddings
++- **open_clip_torch** – CLIP model for images
++- **faster-whisper** – fast audio transcription
++- **pillow** – image handling
++- **transformers** – BLIP image captioning
++- **python-dotenv** – environment configuration
++- **requests** – Mixtral API calls
++- **PyMuPDF** – PDF text extraction
