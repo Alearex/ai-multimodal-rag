@@ -24,3 +24,13 @@ Each dependency is pinned to a specific version for reproducibility.
 - **python-dotenv** – environment configuration
 - **requests** – Mixtral API calls
 - **PyMuPDF** – PDF text extraction
+
+## Configuration
+
+Create a `.env` file at the project root containing your Together API key:
+
+```bash
+TOGETHER_API_KEY=your-key
+```
+
+This variable is required to query the Mixtral API.
