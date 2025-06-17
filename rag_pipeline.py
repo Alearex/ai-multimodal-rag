@@ -115,5 +115,5 @@ def process_query(uploaded_files, question):
     # être prises en compte lors de la génération.
     context = "\n".join(r["content"] for r in results)
 
-    # Appel final à Mixtral avec la question et le contexte extrait
-    return query_mixtral(question, context)
+    prompt = f"{question}\n\n{context}"
+    return query_mixtral(prompt)
