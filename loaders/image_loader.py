@@ -7,7 +7,7 @@ processor = AutoProcessor.from_pretrained("Salesforce/blip-image-captioning-base
 model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base")
 model.eval()  # optionnel mais explicite : passe le modèle en mode évaluation
 
-def load_image_caption(image_path):
+def load_image(image_path):
     """
     Génère une légende pour une image avec le modèle BLIP.
     

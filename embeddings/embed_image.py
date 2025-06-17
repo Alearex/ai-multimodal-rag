@@ -15,12 +15,12 @@ model.eval()
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model.to(device)
 
-def embed_text(text):
+def embed_image(text):
     """
-    Encode un texte descriptif en embedding CLIP (texte).
+    Encode une description d'image en embedding CLIP (texte).
 
     Args:
-        text (str): description textuelle
+        text (str): description textuelle associée à l'image
 
     Returns:
         np.ndarray: vecteur CLIP 512D normalisé

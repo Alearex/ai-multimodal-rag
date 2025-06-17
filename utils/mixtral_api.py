@@ -6,6 +6,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 TOGETHER_API_KEY = os.environ.get("TOGETHER_API_KEY")
+if not TOGETHER_API_KEY:
+    raise RuntimeError(
+        "Missing TOGETHER_API_KEY. Create a .env file with 'TOGETHER_API_KEY=your-key' and reload."
+    )
 
 def query_mixtral(prompt, temperature=0.7, max_tokens=512):
     """
@@ -25,7 +29,7 @@ def query_mixtral(prompt, temperature=0.7, max_tokens=512):
         "Content-Type": "application/json"
     }
     payload = {
-        "model": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+        "model": "mistralai/Mistral-7B-Instruct-v0.1",
         "prompt": prompt,
         "temperature": temperature,
         "max_tokens": max_tokens,

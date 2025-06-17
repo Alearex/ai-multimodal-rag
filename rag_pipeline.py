@@ -15,6 +15,9 @@ from embeddings.embed_audio import embed_audio_text
 from vector_store.faiss_manager import FaissManager
 from utils.mixtral_api import query_mixtral
 
+print(embed_text_chunks(["hello"]).shape)
+print(embed_image("a fox").shape)  # doit afficher (512,)
+
 # Initialise deux index FAISS séparés : un pour le texte, un pour les images
 text_index = FaissManager("vector_store/index_text", dim=384)   # MiniLM
 image_index = FaissManager("vector_store/index_image", dim=512)  # CLIP
@@ -31,8 +34,9 @@ def combined_search(text_index, image_index, text_query_vec, image_query_vec, k=
     Args:
         text_index (FaissManager): index texte (MiniLM)
         image_index (FaissManager): index image (CLIP)
-        text_query_vec (np.ndarray): vecteur de requête texte shape (1, 384)
-        image_query_vec (np.ndarray): vecteur de requête texte encodé par CLIP shape (1, 512)
+        text_query_vec (np.ndarray): vecteur de requête texte de forme ``(384,)`` ou ``(n, 384)``
+        image_query_vec (np.ndarray): vecteur de requête image CLIP de forme ``(512,)`` ou ``(n, 512)``
+
         k (int): nombre de résultats à retourner par index
 
     Returns:
@@ -83,6 +87,7 @@ def process_query(uploaded_files, question):
         # Traitement image : caption + embedding CLIP
         elif suffix in ["png", "jpg", "jpeg"]:
             caption = load_image(tmp_path)
+            print("Caption généré pour l'image :", caption)
             vector = embed_image(caption)
             image_index.add_embeddings([caption], [vector])
 
@@ -96,12 +101,11 @@ def process_query(uploaded_files, question):
 
     # --- Encodage de la question ---
     # Texte : encode avec MiniLM → tensor(1, 384) → .numpy() pour FAISS
-    text_query_vec = embed_text_chunks([question]).numpy()
+    text_query_vec = embed_text_chunks([question])[0].detach().cpu().numpy()
 
-    # Image : encode avec CLIP (retourne directement un np.ndarray shape (512,))
-    # → expand_dims pour le transformer en shape (1, 512) exigé par FAISS
+    # Image : encode avec CLIP (retourne directement un vecteur np.ndarray shape (512,))
+    # La recherche accepte maintenant ce format 1D directement
     image_query_vec = embed_image(question)
-    image_query_vec = np.expand_dims(image_query_vec, 0)
 
     # Recherche fusionnée texte + image
     results = combined_search(text_index, image_index, text_query_vec, image_query_vec, k=5)
