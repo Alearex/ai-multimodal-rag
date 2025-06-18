@@ -15,13 +15,24 @@ from embeddings.embed_audio import embed_audio_text
 from vector_store.faiss_manager import FaissManager
 from utils.mixtral_api import query_mixtral
 
-print(embed_text_chunks(["hello"]).shape)
-print(embed_image("a fox").shape)  # doit afficher (512,)
+# Limite maximale de caractères pour chaque document inséré dans le prompt
+MAX_DOC_LENGTH = 1000
+
+def crop_text(text, max_len=MAX_DOC_LENGTH):
+    """Tronque le texte s'il dépasse ``max_len`` et ajoute une indication."""
+    if len(text) > max_len:
+        return text[:max_len] + " ...[cropped]"
+    return text
 
 # Initialise deux index FAISS séparés : un pour le texte, un pour les images
 text_index = FaissManager("vector_store/index_text", dim=384)   # MiniLM
 image_index = FaissManager("vector_store/index_image", dim=512)  # CLIP
 
+def reset_indexes():
+    """Supprime toutes les données des deux index."""
+    text_index.clear()
+    image_index.clear()
+    
 def normalize(scores):
     """Normalise les distances en scores (1 = plus proche)."""
     max_val = max(scores) if scores else 1.0
@@ -80,7 +91,7 @@ def process_query(uploaded_files, question):
 
         # Traitement PDF : texte par page
         if suffix == "pdf":
-            texts = load_pdf(tmp_path)
+            texts = [crop_text(t) for t in load_pdf(tmp_path)]
             vectors = embed_text_chunks(texts)
             text_index.add_embeddings(texts, vectors)
 
@@ -93,7 +104,7 @@ def process_query(uploaded_files, question):
 
         # Traitement audio : transcription + embedding MiniLM
         elif suffix in ["mp3", "wav"]:
-            transcript = load_audio(tmp_path)
+            transcript = crop_text(load_audio(tmp_path))
             vector = embed_audio_text(transcript)
             text_index.add_embeddings([transcript], [vector])
 
@@ -110,10 +121,12 @@ def process_query(uploaded_files, question):
     # Recherche fusionnée texte + image
     results = combined_search(text_index, image_index, text_query_vec, image_query_vec, k=5)
 
-    # Construction du contexte en agrégeant le contenu de tous les résultats
-    # (texte et images) afin que les éventuelles légendes d'images puissent
-    # être prises en compte lors de la génération.
-    context = "\n".join(r["content"] for r in results)
+    # Construction du contexte en séparant clairement chaque document
+    formatted = []
+    for idx, r in enumerate(results, start=1):
+        snippet = crop_text(r["content"])
+        formatted.append(f"### Document {idx} ({r['source']})\n{snippet}")
 
+    context = "\n\n".join(formatted)
     prompt = f"{question}\n\n{context}"
     return query_mixtral(prompt)

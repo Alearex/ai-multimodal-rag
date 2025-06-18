@@ -31,6 +31,19 @@ class FaissManager:
             self.index = faiss.IndexFlatL2(dim)
             self.texts = []
 
+    
+    def clear(self):
+        """Supprime les fichiers d'index et réinitialise l'état en mémoire."""
+        # Delete on-disk index files if they exist
+        if os.path.exists(self.index_file):
+            os.remove(self.index_file)
+        if os.path.exists(self.store_file):
+            os.remove(self.store_file)
+
+        # Reset in-memory objects
+        self.index = faiss.IndexFlatL2(self.dim)
+        self.texts = []
+        
     def add_embeddings(self, texts, embeddings):
         """
         Ajoute des vecteurs et leurs textes à l’index.
@@ -39,9 +52,14 @@ class FaissManager:
             texts (list[str]): textes liés aux vecteurs
             embeddings (list[np.ndarray] ou torch.Tensor): vecteurs
         """
-        if not texts or not embeddings:
+        if (
+            texts is None
+            or embeddings is None
+            or len(texts) == 0
+            or (hasattr(embeddings, "__len__") and len(embeddings) == 0)
+        ):
             return  # Rien à ajouter
-
+            
         assert len(texts) == len(embeddings), "Mismatch entre textes et vecteurs"
 
         embeddings_np = np.stack([

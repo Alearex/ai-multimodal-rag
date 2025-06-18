@@ -2,7 +2,7 @@
 import streamlit as st
 
 # On importe notre fonction principale de traitement, définie dans rag_pipeline.py
-from rag_pipeline import process_query
+from rag_pipeline import process_query, reset_indexes
 
 # Configuration de la page web (nom de l'onglet du navigateur, icône, etc.)
 st.set_page_config(page_title="Assistant IA Multimodal RAG")
@@ -20,6 +20,11 @@ uploaded_files = st.file_uploader(
 # Champ texte pour poser une question à l'IA
 question = st.text_input("Posez votre question :")
 
+# Bouton pour réinitialiser les index
+if st.button("Réinitialiser les index"):
+    reset_indexes()
+    st.success("Index réinitialisés")
+    
 # Bouton "Lancer la recherche" : une fois cliqué, on traite les fichiers + la question
 if st.button("Lancer la recherche") and uploaded_files and question:
     # Affiche un message de chargement pendant le traitement
